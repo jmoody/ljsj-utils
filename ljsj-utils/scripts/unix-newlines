@@ -1,0 +1,3 @@
+#!/usr/bin/perl -i.bak -p
+# Replace CR with LF (Mac to unix)
+s/\r/\n/g;

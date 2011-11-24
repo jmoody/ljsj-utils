@@ -1,0 +1,52 @@
+genre
+  *genre_id
+  name
+
+performer
+  *performer_id
+  name
+  genre (fk genre_id in genre)
+
+performance
+  *performance_id
+  date
+  price
+  time
+  price
+  venue (fk venue_id in venue) cascade update
+  performer (fk performer_id in performer) casedelete
+
+
+venue
+  *venue_id
+  name
+  address (fk address_id in address) no action
+
+address
+  *address_id
+  address1
+  address2
+  city
+  state
+  zip
+
+=== values ===
+
+address
+ Cameron Rd., Benton Way, Kensington St, Alvarado Terr.
+ 1334, 2641, 39, 1135
+ Apt 306, Suite 1001, Room 903 ""
+ ME, CA, VT, FL
+
+venue
+  Little Joy, Shortstop, Elf, City Sip
+
+performer
+  Will Oldham (solo), Cooling Time (band), Spaulding Gray (monologist)
+  REM (band), Lenny Bruce (stand-up), Cooper, Ling, and Howe (band)
+
+performance
+  random date generator
+  random time generator
+  price random price generator
+

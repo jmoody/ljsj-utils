@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+           http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <!-- this file is a maven settings.xml template. 
+       it should be filled out and installed in
+       the local $HOME/.m2/ directory -->
+  <servers>
+    <server>
+      <id>ldc-server</id>
+      <username>ldc</username>
+      <password></password>
+    </server>
+  </servers>
+</settings>

@@ -1,0 +1,9 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;today.year, Little Joy Software&#10;All rights reserved.&#10;&#10;Redistribution and use in source and binary forms, with or without&#10;modification, are permitted provided that the following conditions are&#10;met:&#10;    * Redistributions of source code must retain the above copyright&#10;      notice, this list of conditions and the following disclaimer.&#10;    * Redistributions in binary form must reproduce the above copyright&#10;      notice, this list of conditions and the following disclaimer in&#10;      the documentation and/or other materials provided with the&#10;      distribution.&#10;    * Neither the name of the Little Joy Software nor the names of its &#10;      contributors may be used to endorse or promote products derived&#10;      from this software without specific prior written permission.&#10;&#10;THIS SOFTWARE IS PROVIDED BY LITTLE JOY SOFTWARE ''AS IS'' AND ANY&#10;EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&#10;IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR&#10;PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL LITTLE JOY SOFTWARE BE&#10;LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR&#10;CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF&#10;SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR&#10;BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,&#10;WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE&#10;OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN&#10;IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE." />
+    <option name="keyword" value="Copyright" />
+    <option name="allowReplaceKeyword" value="" />
+    <option name="myName" value="3-clause-bsd" />
+    <option name="myLocal" value="true" />
+  </copyright>
+</component>

@@ -1,0 +1,308 @@
+# Example MySQL config file for very large systems.
+#
+# This is for a large system with memory of 1G-2G where the system runs mainly
+# MySQL.
+#
+# You can copy this file to
+# /etc/my.cnf to set global options,
+# mysql-data-dir/my.cnf to set server-specific options (in this
+# installation this directory is /usr/local/mysql/data) or
+# ~/.my.cnf to set user-specific options.
+#
+# In this file, you can use all long options that a program supports.
+# If you want to know which options a program supports, run the program
+# with the "--help" option.
+
+# The following options will be passed to all MySQL clients
+[client]
+#password	= your_password
+port		= 3306
+socket		= /tmp/mysql.sock
+
+# Here follows entries for some specific programs
+
+# The MySQL server
+[mysqld]
+port		= 3306
+socket		= /tmp/mysql.sock
+bind-address    = localhost
+
+
+### --------------------------------------------------------------------------
+### Don't listen on a TCP/IP port at all. This can be a security enhancement,
+### if all processes that need to connect to mysqld run on the same host.
+### All interaction with mysqld must be made via Unix sockets or named pipes.
+### Note that using this option without enabling named pipes on Windows
+### (via the "enable-named-pipe" option) will render mysqld useless!
+### --------------------------------------------------------------------------
+
+### skip-networking
+
+### --------------------------------------------------------------------------
+### Use the --skip-locking MySQL option to avoid external
+### locking. Note that this will not impact MySQL's functionality as
+### long as you only run one server. Just remember to take down the
+### server (or lock relevant parts) before you run myisamchk. On some
+### system this switch is mandatory because the external locking does
+### not work in any case. The --skip-locking option is on by default
+### when compiling with MIT-pthreads, because flock() isn't fully
+### supported by MIT-pthreads on all platforms. It's also on default
+### for Linux as Linux file locking are not yet safe. The only case
+### when you can't use --skip-locking is if you run multiple MySQL
+### servers (not clients) on the same data, or run myisamchk on the
+### table without first flushing and locking the mysqld server tables
+### first. You can still use LOCK TABLES/UNLOCK TABLES even if you are
+### using --skip-locking
+### --------------------------------------------------------------------------
+#skip-locking
+skip-external-locking
+
+### --------------------------------------------------------------------------
+### min_memory_needed = global_buffers + (thread_buffers * max_connections) 
+### where thread_buffers includes the following:
+###   sort_buffer                 2M (2M)
+###   myisam_sort_buffer          8M (8M)
+###   read_buffer                 2M (128K)
+###   join_buffer                 2M (128K)
+###   read_rnd_buffer             2M (256K)
+###                             ----
+###   total                      12M
+###   total w/o myisam sort       4M (see details below)      
+### and global_buffers includes: 
+###   key_buffer                512M (128K)
+###   innodb_buffer_pool        512M 
+###   innodb_log_buffer         128M
+###   innodb_additional_mem_pool  8M
+###   net_buffer                  0M (16K)
+###                             ----
+###                            1160M
+###
+### max_connections              100
+###
+### min_memory_needed = 1160M + (4M * 100) = 1160M + 400M = 1560M = 1.6G
+### --------------------------------------------------------------------------
+
+### --------------------------------------------------------------------------
+### If this is changed, you must do the following:
+### 1. recalculate the the minimum amount of RAM
+### 2. in tomcat/conf/server.xml, change the value of maxThreads in the thread 
+###    pool Executor to match this value
+### 3. in server/scripts/deploy.sh, when writing context.xml, change the
+###    maximum number of connections to match this value 
+### --------------------------------------------------------------------------
+max_connections = 100
+
+# thread buffers
+
+### --------------------------------------------------------------------------
+### read_buffer_size and read_rnd_buffer_size are not specific to any storage 
+### engine and apply in a general manner for optimization. See Section 6.5.7, 
+### --------------------------------------------------------------------------
+sort_buffer_size = 2M
+read_buffer_size = 2M
+
+### --------------------------------------------------------------------------
+### The size of the buffer that is allocated when sorting MyISAM
+### indexes during a REPAIR TABLE or when creating indexes with CREATE
+### INDEX or ALTER TABLE. The maximum allowable setting for
+### myisam_sort_buffer_size is 4GB.
+### --------------------------------------------------------------------------
+myisam_sort_buffer_size = 8M
+
+join_buffer_size = 2M
+read_rnd_buffer_size = 2M
+
+# global buffers
+key_buffer = 384M
+
+### --------------------------------------------------------------------------
+### Each client thread is associated with a connection buffer and
+### result buffer. Both begin with a size given by net_buffer_length
+### but are dynamically enlarged up to max_allowed_packet bytes as
+### needed. The result buffer shrinks to net_buffer_length after each
+### SQL statement. This variable should not normally be changed, but
+### if you have very little memory, you can set it to the expected
+### length of statements sent by clients. If statements exceed this
+### length, the connection buffer is automatically enlarged. The
+### maximum value to which net_buffer_length can be set is 1MB.
+### --------------------------------------------------------------------------
+#net_buffer_length = 1M
+
+### --------------------------------------------------------------------------
+### The maximum size of one packet or any generated/intermediate
+### string. The packet message buffer is initialized to
+### net_buffer_length bytes, but can grow up to max_allowed_packet
+### bytes when needed. This value by default is small, to catch large
+### (possibly incorrect) packets. You must increase this value if you
+### are using large BLOB columns or long strings. It should be as big
+### as the largest BLOB you want to use. The protocol limit for
+### max_allowed_packet is 1GB.
+### --------------------------------------------------------------------------
+#max_allowed_packet = 16M
+
+### --------------------------------------------------------------------------
+### Set the query cache type. Setting the GLOBAL value sets the type
+### for all clients that connect thereafter. Individual clients can
+### set the SESSION value to affect their own use of the query 
+### cache. Possible values are shown in the following table:
+### Option         Description 
+### 0 or OFF       Dont cache results in or retrieve results from the query 
+###                cache. Note that this does not deallocate the query cache 
+###                buffer. To do that, you should set query_cache_size to 0.  
+### 1 or ON        Cache all query results except for those that begin with 
+###                SELECT SQL_NO_CACHE.  
+### 2 or DEMAND    Cache results only for queries that begin with 
+###                SELECT SQL_CACHE.
+### --------------------------------------------------------------------------
+query_cache_type = 1
+query_cache_size = 32M
+
+### --------------------------------------------------------------------------
+### The number of open tables for all threads. Increasing this value
+### increases the number of file descriptors that mysqld requires. You
+### can check whether you need to increase the table cache by checking
+### the Opened_tables status variable. See Section 5.1.5,
+### --------------------------------------------------------------------------
+table_cache = 512
+
+### --------------------------------------------------------------------------
+### The stack size for each thread. Many of the limits detected by the
+### crash-me test are dependent on this value. The default is large
+### enough for normal operation. See Section 6.1.4
+### --------------------------------------------------------------------------
+#thread_stack = 192K
+
+### --------------------------------------------------------------------------
+### How many threads the server should cache for reuse. When a client
+### disconnects, the client's threads are put in the cache if there
+### are fewer than thread_cache_size threads there. Requests for
+### threads are satisfied by reusing threads taken from the cache if
+### possible, and only when the cache is empty is a new thread
+### created. This variable can be increased to improve performance if
+### you have a lot of new connections. (Normally, this doesn't provide
+### a notable performance improvement if you have a good thread
+### implementation.) By examining the difference between the
+### Connections and Threads_created status variables, you can see how
+### efficient the thread cache is.
+### --------------------------------------------------------------------------
+thread_cache_size = 8
+
+### --------------------------------------------------------------------------
+### On Solaris, mysqld calls thr_setconcurrency() with this
+### value. This function enables applications to give the threads
+### system a hint about the desired number of threads that should be
+### run at the same time.
+### NB:  totally useless on anything but Solaris
+### --------------------------------------------------------------------------
+#Try number of CPU's*2 for thread_concurrency
+#thread_concurrency = 2
+
+### --------------------------------------------------------------------------
+### Logging
+### --------------------------------------------------------------------------
+
+# Both location gets rotated by the cronjob. 
+# Be aware that this log type is a performance killer. 
+#log            = /var/log/mysql/mysql.log 
+general_log            = /var/log/mysql/mysql.log 
+
+# Here you can see queries with especially long duration 
+#log_slow_queries    = /var/log/mysql/mysql-slow.log
+#log_slow_log        = /var/log/mysql/mysql-slow.log
+slow_query_log_file    = /var/log/mysql/mysql-slow.log
+
+# this indicates 5 sec 
+long_query_time = 5
+
+# will log to log_slow_queries file 
+log-queries-not-using-indexes 
+
+
+
+# turn on logging
+log_bin                 = /opt/local/var/db/mysql5/mysql-bin.log 
+sync_binlog             = 1
+
+# WARNING: Using expire_logs_days without bin_log crashes the server! See README.Debian!
+expire_logs_days        = 30
+max_binlog_size         = 100M
+#binlog_do_db = include_database_name 
+#binlog_ignore_db = include_database_name
+innodb_flush_log_at_trx_commit  = 1
+
+### --------------------------------------------------------------------------
+### Replication
+### --------------------------------------------------------------------------
+#server-id               = 2
+
+
+### --------------------------------------------------------------------------
+### BerkeleyDB 
+### Using BerkeleyDB is now discouraged as its support will cease in 5.1.12.
+### --------------------------------------------------------------------------
+#skip-bdb
+
+### --------------------------------------------------------------------------
+### InnoDB tables
+### InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/. 
+### Read the manual for more InnoDB related options. There are many! 
+### You might want to disable InnoDB to shrink the mysqld process by circa 100MB.   
+### --------------------------------------------------------------------------
+
+innodb_data_home_dir = /opt/local/var/db/mysql5
+innodb_data_file_path = ibdata1:2000M;ibdata2:10M:autoextend
+innodb_log_group_home_dir = /opt/local/var/db/mysql5
+#You can set .._buffer_pool_size up to 50 - 80 %
+#of RAM but beware of setting memory usage too high
+innodb_buffer_pool_size = 512M
+innodb_additional_mem_pool_size = 8M
+#Set .._log_file_size to 25 % of buffer pool size
+innodb_log_file_size = 128M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 1
+innodb_lock_wait_timeout = 50
+
+### --------------------------------------------------------------------------
+### InnoDB tries to keep the number of operating system threads
+### concurrently inside InnoDB less than or equal to the limit given
+### by this variable. Once the number of threads reaches this limit,
+### additional threads are placed into a wait state within a FIFO
+### queue for execution. Threads waiting for locks are not counted in
+### the number of concurrently executing threads. The correct value
+### for this variable is dependent on environment and workload. You
+### will need to try a range of different values to determine what
+### value works for your application. The range of this variable is 0
+### to 1000. A value of 20 or higher is interpreted as infinite
+### concurrency before MySQL 5.0.19. From 5.0.19 on, you can disable
+### thread concurrency checking by setting the value to 0, which
+### allows InnoDB to create as many threads as it needs. The default
+### value has changed several times: 8 before MySQL 5.0.8, 20
+### (infinite) from 5.0.8 through 5.0.18, 0 (infinite) from 5.0.19 to
+### 5.0.20, and 8 (finite) from 5.0.21 on.
+### --------------------------------------------------------------------------
+#innodb_thread_concurrency=8
+
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+[mysql]
+no-auto-rehash
+# Remove the next comment character if you are not familiar with SQL
+safe-updates
+
+[isamchk]
+key_buffer = 256M
+sort_buffer_size = 256M
+read_buffer = 2M
+write_buffer = 2M
+
+[myisamchk]
+key_buffer = 256M
+sort_buffer_size = 256M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout
